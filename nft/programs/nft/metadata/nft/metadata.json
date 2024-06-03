@@ -1,0 +1,55 @@
+{
+    "name": "SolanaArtProject #1",
+    "description": "Generative art on Solana.",
+    "image": "https://uug5h2tsehd6a7t7bko7qcyygwluzfvxp4guwl3xc66ypeeb6vua.arweave.net/pQ3T6nIhx-B-fwqd-AsYNZdMlrd_DUsvdxe9h5CB9Wg?ext=png",
+    "animation_url": "https://uug5h2tsehd6a7t7bko7qcyygwluzfvxp4guwl3xc66ypeeb6vua.arweave.net/pQ3T6nIhx-B-fwqd-AsYNZdMlrd_DUsvdxe9h5CB9Wg?ext=png",
+    "external_url": "https://uug5h2tsehd6a7t7bko7qcyygwluzfvxp4guwl3xc66ypeeb6vua.arweave.net/pQ3T6nIhx-B-fwqd-AsYNZdMlrd_DUsvdxe9h5CB9Wg?ext=png",
+    "attributes": [
+      {
+        "trait_type": "eyes",
+        "value": "black"
+      },
+      {
+        "trait_type": "spec",
+        "value": "oval-square"
+      },
+      {
+        "trait_type": "hair",
+        "value": "curly"
+      },
+      {
+        "trait_type": "lips",
+        "value": "pink"
+      }
+    ],
+    "properties": {
+      "files": [
+        {
+          "uri": "https://www.arweave.net/abcd5678?ext=png",
+          "type": "image/png"
+        },
+        {
+          "uri": "https://watch.videodelivery.net/9876jkl",
+          "type": "unknown",
+          "cdn": true
+        },
+        {
+          "uri": "https://www.arweave.net/efgh1234?ext=mp4",
+          "type": "video/mp4"
+        }
+      ],
+      "category": "video",
+  
+      "collection": {
+        "name": "Solflare X NFT",
+        "family": "Solflare"
+      },
+  
+      "creators": [
+        {
+          "address": "FDFAEes1Tc4WbZeD6aJ25VHPUiUJVFDzUW3abiDRKmXD",
+          "share": 100
+        }
+      ]
+    }
+  }
