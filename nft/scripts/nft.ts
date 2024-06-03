@@ -6,8 +6,6 @@ import {
   TOKEN_2022_PROGRAM_ID,
   getAccount,
   getAssociatedTokenAddress,
-  getMultipleAccounts,
-  getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
 import {
   AdminAddress,
@@ -196,21 +194,10 @@ const updateNftProgramAdmin = async (admin: PublicKey) => {
 const mintNFT = async () => {
   let user = new PublicKey("Ex7y8SZSpd1BMDa5mMRe16CvevsH564EzmECLfxiNbV3");
 
-  const rawPayerKeypair = JSON.parse(
-    fs.readFileSync("/home/tarunjais/.config/solana/id.json", "utf-8"),
-  );
-  const adminKey = anchor.web3.Keypair.fromSecretKey(
-    Buffer.from(rawPayerKeypair),
-  );
-
   // Creating associated token for user for Test
-  let userATA = await getOrCreateAssociatedTokenAccount(
-    provider.connection,
-    adminKey,
+  let userATA = await getAssociatedTokenAddress(
     mintAccount,
     user,
-    undefined,
-    undefined,
     undefined,
     TOKEN_2022_PROGRAM_ID,
   );
@@ -220,7 +207,7 @@ const mintNFT = async () => {
     .accounts({
       maintainers: pdaMaintainers,
       mintAccount,
-      toAccount: userATA.address,
+      toAccount: userATA,
       authority: AdminAddress,
       tokenProgram: TOKEN_2022_PROGRAM_ID,
     })
@@ -261,13 +248,6 @@ const burnNFT = async () => {
 const transferNFT = async () => {
   let user = new PublicKey("Ex7y8SZSpd1BMDa5mMRe16CvevsH564EzmECLfxiNbV3");
 
-  const rawPayerKeypair = JSON.parse(
-    fs.readFileSync("/home/tarunjais/.config/solana/id.json", "utf-8"),
-  );
-  const adminKey = anchor.web3.Keypair.fromSecretKey(
-    Buffer.from(rawPayerKeypair),
-  );
-
   // Creating associated token for user for Test
   let fromATA = await getAssociatedTokenAddress(
     mintAccount,
@@ -276,26 +256,22 @@ const transferNFT = async () => {
     TOKEN_2022_PROGRAM_ID,
   );
 
-  let toATA = (
-    await getOrCreateAssociatedTokenAccount(
-      provider.connection,
-      adminKey,
+  let toATA = 
+    await getAssociatedTokenAddress(
       mintAccount,
       AdminAddress,
       undefined,
-      undefined,
-      undefined,
       TOKEN_2022_PROGRAM_ID,
-    )
-  ).address;
+    );
 
   let tx = await program.methods
     .transfer(COLLECTION, TEST_NFT)
     .accounts({
       mintAccount,
-      fromAccount: fromATA,
-      toAccount: toATA,
+      fromAta: fromATA,
+      toAta: toATA,
       authority: AdminAddress,
+      toAccount: user,
       tokenProgram: TOKEN_2022_PROGRAM_ID,
       systemProgram: anchor.web3.SystemProgram.programId,
     })

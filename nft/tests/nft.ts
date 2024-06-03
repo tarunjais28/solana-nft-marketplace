@@ -2,16 +2,13 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import {
   TOKEN_2022_PROGRAM_ID,
-  getOrCreateAssociatedTokenAccount,
   getAssociatedTokenAddress,
   getAccount,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { BN } from "bn.js";
 import { assert } from "chai";
 import { Nft } from "../target/types/nft";
 import { it } from "node:test";
-import { ASSOCIATED_PROGRAM_ID, associatedAddress } from "@coral-xyz/anchor/dist/cjs/utils/token";
 
 // Create test keypairs
 const admin = anchor.web3.Keypair.generate();
@@ -102,8 +99,7 @@ describe("token_program", () => {
     await confirmTransaction(createNft);
   };
 
-  const mint = async (collectionName, nftName, user1ATA, signer) => {
-    let ass = getAssociatedTokenAddress(mintAccount, signer.publicKey, undefined, TOKEN_2022_PROGRAM_ID);
+  const mint = async (collectionName, nftName, user1ATA) => {
     // Test mint_token instruction
     let mintNFT = await program.methods
       .mint(collectionName, nftName)
@@ -111,12 +107,11 @@ describe("token_program", () => {
         maintainers: pdaMaintainers,
         mintAccount,
         toAccount: user1ATA,
-        authority: signer.publicKey,
+        authority: user1.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
-        associated_token: ASSOCIATED_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([signer])
+      .signers([user1])
       .rpc();
 
     await confirmTransaction(mintNFT);
@@ -145,8 +140,9 @@ describe("token_program", () => {
       .transfer(collectionName, nftName)
       .accounts({
         mintAccount,
-        fromAccount: fromATA,
-        toAccount: toATA,
+        fromAta: fromATA,
+        toAta: toATA,
+        toAccount: user2.publicKey,
         authority: user1.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -335,18 +331,14 @@ describe("token_program", () => {
     );
 
     // Creating associated token for user1 for Test
-    let user1ATA = await getOrCreateAssociatedTokenAccount(
-      provider.connection,
-      payer,
+    let user1ATA = await getAssociatedTokenAddress(
       mintAccount,
       user1.publicKey,
-      undefined,
-      undefined,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );
 
-    await mint(COLLECTION, TEST_NFT, user1ATA.address, admin);
+    await mint(COLLECTION, TEST_NFT, user1ATA);
 
     // Check balance after mint
     let supply = await provider.connection.getTokenSupply(mintAccount);
@@ -354,7 +346,7 @@ describe("token_program", () => {
 
     let user1Account = await getAccount(
       provider.connection,
-      user1ATA.address,
+      user1ATA,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );
@@ -372,18 +364,14 @@ describe("token_program", () => {
     );
 
     // Creating associated token for user1 for Test-1
-    user1ATA = await getOrCreateAssociatedTokenAccount(
-      provider.connection,
-      payer,
+    user1ATA = await getAssociatedTokenAddress(
       mintAccount,
       user1.publicKey,
-      undefined,
-      undefined,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );
 
-    await mint(COLLECTION_1, TEST_1_NFT, user1ATA.address, admin);
+    await mint(COLLECTION_1, TEST_1_NFT, user1ATA);
 
     // Check balance after mint
     supply = await provider.connection.getTokenSupply(mintAccount);
@@ -391,7 +379,7 @@ describe("token_program", () => {
 
     user1Account = await getAccount(
       provider.connection,
-      user1ATA.address,
+      user1ATA,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );
@@ -520,72 +508,43 @@ describe("token_program", () => {
     );
 
     // Creating associated token for user1 and Test-2
-    let user1ATA = await getOrCreateAssociatedTokenAccount(
-      provider.connection,
-      payer,
+    let user1ATA = await getAssociatedTokenAddress(
       mintAccount,
       user1.publicKey,
       undefined,
-      undefined,
-      undefined,
       TOKEN_2022_PROGRAM_ID,
     );
+
+    await mint(COLLECTION_2, TEST_2_NFT, user1ATA);
 
     let user1Account = await getAccount(
       provider.connection,
-      user1ATA.address,
-      undefined,
-      TOKEN_2022_PROGRAM_ID,
-    );
-    assert.equal(Number(user1Account.amount), 0);
-
-    await mint(COLLECTION_2, TEST_2_NFT, user1ATA.address, admin);
-
-    user1Account = await getAccount(
-      provider.connection,
-      user1ATA.address,
+      user1ATA,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );
     assert.equal(Number(user1Account.amount), 1);
 
-    let user2ATA = await getOrCreateAssociatedTokenAccount(
-      provider.connection,
-      payer,
+    let user2ATA = await getAssociatedTokenAddress(
       mintAccount,
       user2.publicKey,
       undefined,
-      undefined,
-      undefined,
       TOKEN_2022_PROGRAM_ID,
     );
 
-    let user2Account = await getAccount(
-      provider.connection,
-      user2ATA.address,
-      undefined,
-      TOKEN_2022_PROGRAM_ID,
-    );
-    assert.equal(Number(user2Account.amount), 0);
-
-    await transfer(
-      COLLECTION_2,
-      TEST_2_NFT,
-      user1ATA.address,
-      user2ATA.address,
-    );
+    await transfer(COLLECTION_2, TEST_2_NFT, user1ATA, user2ATA);
 
     user1Account = await getAccount(
       provider.connection,
-      user1ATA.address,
+      user1ATA,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );
     assert.equal(Number(user1Account.amount), 0);
 
-    user2Account = await getAccount(
+    let user2Account = await getAccount(
       provider.connection,
-      user2ATA.address,
+      user2ATA,
       undefined,
       TOKEN_2022_PROGRAM_ID,
     );

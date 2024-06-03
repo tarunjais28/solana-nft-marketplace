@@ -9,5 +9,5 @@ mod mint;
 mod transfer;
 
 pub use {
-    burn::*, create_nft::*, init_collection::*, initialize::*, maintainers::*, mint::*, transfer::*,
+    burn::*, create_nft::*, init_collection::*, initialize::*, maintainers::*, mint::*, transfer::*
 };

@@ -15,9 +15,9 @@ pub fn transfer_nft(ctx: Context<TransferNFT>, collection: String, nft: String) 
     // Create the Transfer struct for our context
     let cpi_accounts = TransferChecked {
         mint: ctx.accounts.mint_account.to_account_info(),
-        to: ctx.accounts.to_account.to_account_info(),
+        to: ctx.accounts.to_ata.to_account_info(),
         authority: ctx.accounts.authority.to_account_info(),
-        from: ctx.accounts.from_account.to_account_info(),
+        from: ctx.accounts.from_ata.to_account_info(),
     };
 
     token_2022::transfer_checked(
@@ -30,7 +30,7 @@ pub fn transfer_nft(ctx: Context<TransferNFT>, collection: String, nft: String) 
     emit!(TransferEvent {
         nft,
         amount: 1,
-        from: ctx.accounts.from_account.to_account_info().key(),
+        from: ctx.accounts.authority.to_account_info().key(),
         to: ctx.accounts.to_account.to_account_info().key()
     });
 
@@ -48,19 +48,37 @@ pub struct TransferNFT<'info> {
     )]
     pub mint_account: Box<InterfaceAccount<'info, Mint>>,
 
-    /// CHECK: This is the token account that we want to transfer tokens from
-    #[account(mut)]
-    pub from_account: Box<InterfaceAccount<'info, TokenAccount>>,
+    /// CHECK: ATA of from_account
+    #[account(
+        init_if_needed,
+        payer = authority,
+        associated_token::mint = mint_account,
+        associated_token::authority = authority,
+        associated_token::token_program = token_program,
+    )]
+    pub from_ata: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    /// CHECK: This is the token account that we want to transfer tokens to
-    #[account(mut)]
-    pub to_account: Box<InterfaceAccount<'info, TokenAccount>>,
+    /// CHECK: ATA of to_account
+    #[account(
+        init_if_needed,
+        payer = authority,
+        associated_token::mint = mint_account,
+        associated_token::authority = to_account,
+        associated_token::token_program = token_program,
+    )]
+    pub to_ata: Box<InterfaceAccount<'info, TokenAccount>>,
 
     /// CHECK: the authority of the mint account
     #[account(mut)]
     pub authority: Signer<'info>,
 
+    /// CHECK: To account
+    #[account(mut)]
+    pub to_account: AccountInfo<'info>,
+
     pub token_program: Program<'info, Token2022>,
 
     pub system_program: Program<'info, System>,
+    
+    pub associated_token_program: Program<'info, AssociatedToken>,
 }

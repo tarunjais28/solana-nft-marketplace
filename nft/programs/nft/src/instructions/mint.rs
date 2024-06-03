@@ -14,40 +14,6 @@ pub fn mint_nft(ctx: Context<MintNFT>, collection: String, nft: String) -> Resul
     let signer = [&seeds[..]];
     let cpi_program = ctx.accounts.token_program.to_account_info();
 
-    // let cpi_accounts = anchor_spl::associated_token::Create {
-    //     payer: ctx.accounts.authority.to_account_info(),
-    //     associated_token: ctx.accounts.associated_token_program.to_account_info(),
-    //     authority: ctx.accounts.authority.to_account_info(),
-    //     mint: ctx.accounts.mint_account.to_account_info(),
-    //     system_program: ctx.accounts.system_program.to_account_info(),
-    //     token_program: ctx.accounts.token_program.to_account_info(),
-    // };
-    // anchor_spl::associated_token::create(CpiContext::new_with_signer(
-    //     ctx.accounts.system_program.to_account_info(),
-    //     cpi_accounts,
-    //     &signer,
-    // ))?;
-
-    // let ix = spl_associated_token_account::instruction::create_associated_token_account(
-    //     ctx.accounts.authority.key,
-    //     ctx.accounts.authority.key,
-    //     &ctx.accounts.mint_account.key(),
-    //     ctx.accounts.token_program.key,
-    // );
-    // anchor_lang::solana_program::program::invoke_signed(
-    //     &ix,
-    //     &[
-    //         ctx.accounts.authority.to_account_info(),
-    //         ctx.accounts.mint_account.to_account_info(),
-    //         ctx.accounts.system_program.to_account_info(),
-    //         ctx.accounts.token_program.to_account_info(),
-    //     ],
-    //     &signer,
-    // )?;
-
-    // let acc = anchor_spl::associated_token::get_associated_token_address(&ctx.accounts.authority.key(), &ctx.accounts.mint_account.key());
-    // msg!("yesssss: {}", acc);
-
     // Create the MintTo struct for our context
     let cpi_accounts = MintTo {
         mint: ctx.accounts.mint_account.to_account_info(),
@@ -86,8 +52,14 @@ pub struct MintNFT<'info> {
     pub mint_account: Box<InterfaceAccount<'info, Mint>>,
 
     /// CHECK: This is the token account that we want to mint tokens to (ATA)
-    #[account(mut)]
-    pub to_account: AccountInfo<'info>,
+    #[account(
+        init_if_needed,
+        payer = authority,
+        associated_token::mint = mint_account,
+        associated_token::authority = authority,
+        associated_token::token_program = token_program,
+    )]
+    pub to_account: InterfaceAccount<'info, TokenAccount>,
 
     /// CHECK: the authority of the mint account
     #[account(mut)]
@@ -95,9 +67,9 @@ pub struct MintNFT<'info> {
 
     pub token_program: Program<'info, Token2022>,
 
-    // pub associated_token_program: Program<'info, AssociatedToken>,
-
     pub system_program: Program<'info, System>,
+    
+    pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
 impl<'info> MintNFT<'info> {
