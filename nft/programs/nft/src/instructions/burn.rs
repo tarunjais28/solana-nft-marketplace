@@ -10,6 +10,12 @@ pub fn burn_nft(ctx: Context<BurnNFT>, collection: String, nft: String) -> Resul
     ];
     let signer = [&seeds[..]];
 
+    let counter = &mut ctx.accounts.nft_counter;
+    counter.decreement();
+
+    let collections = &mut ctx.accounts.collections;
+    collections.remove_nft(ctx.accounts.mint_account.key());
+
     let cpi_program = ctx.accounts.token_program.to_account_info();
 
     // Create the MintTo struct for our context
@@ -32,13 +38,6 @@ pub fn burn_nft(ctx: Context<BurnNFT>, collection: String, nft: String) -> Resul
 #[derive(Accounts)]
 #[instruction(collection: String, nft: String)]
 pub struct BurnNFT<'info> {
-    #[account(
-        mut,
-        seeds = [MAINTAINERS_TAG],
-        bump,
-    )]
-    pub maintainers: Box<Account<'info, Maintainers>>,
-
     /// CHECK: This is the token that we want to mint
     #[account(
         mut,

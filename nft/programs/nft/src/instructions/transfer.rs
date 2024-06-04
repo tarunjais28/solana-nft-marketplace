@@ -79,6 +79,6 @@ pub struct TransferNFT<'info> {
     pub token_program: Program<'info, Token2022>,
 
     pub system_program: Program<'info, System>,
-    
+
     pub associated_token_program: Program<'info, AssociatedToken>,
 }

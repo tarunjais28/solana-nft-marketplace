@@ -77,30 +77,6 @@
       ],
       "accounts": [
         {
-          "name": "maintainers",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  105,
-                  110,
-                  116,
-                  97,
-                  105,
-                  110,
-                  101,
-                  114,
-                  115
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "mint_account",
           "writable": true,
           "pda": {
@@ -200,6 +176,35 @@
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "close_nft",
+      "discriminator": [
+        234,
+        232,
+        31,
+        120,
+        12,
+        30,
+        61,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "mint_account",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        }
+      ],
+      "args": []
     },
     {
       "name": "create_nft",
@@ -418,30 +423,6 @@
       ],
       "accounts": [
         {
-          "name": "maintainers",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  105,
-                  110,
-                  116,
-                  97,
-                  105,
-                  110,
-                  101,
-                  114,
-                  115
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "collections",
           "writable": true,
           "pda": {
@@ -495,10 +476,6 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "token_program",
-          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
       "args": [
@@ -575,29 +552,6 @@
         166
       ],
       "accounts": [
-        {
-          "name": "maintainers",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  105,
-                  110,
-                  116,
-                  97,
-                  105,
-                  110,
-                  101,
-                  114,
-                  115
-                ]
-              }
-            ]
-          }
-        },
         {
           "name": "mint_account",
           "writable": true,
@@ -1007,6 +961,19 @@
       ]
     },
     {
+      "name": "CloseNftEvent",
+      "discriminator": [
+        86,
+        8,
+        136,
+        106,
+        243,
+        251,
+        229,
+        158
+      ]
+    },
+    {
       "name": "CreateNftEvent",
       "discriminator": [
         107,
@@ -1128,6 +1095,18 @@
           {
             "name": "amount",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CloseNftEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint_account",
+            "type": "pubkey"
           }
         ]
       }

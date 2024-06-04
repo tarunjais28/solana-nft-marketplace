@@ -12,13 +12,6 @@ pub fn process_init_collection(_: Context<InitCollection>, collection: String) -
 #[instruction(collection: String)]
 pub struct InitCollection<'info> {
     #[account(
-        mut,
-        seeds = [MAINTAINERS_TAG],
-        bump,
-    )]
-    pub maintainers: Box<Account<'info, Maintainers>>,
-
-    #[account(
         init,
         seeds = [COLLECTION_TAG, collection.as_bytes()],
         bump,
@@ -37,6 +30,4 @@ pub struct InitCollection<'info> {
     pub payer: Signer<'info>,
 
     pub system_program: Program<'info, System>,
-
-    pub token_program: Program<'info, Token2022>,
 }

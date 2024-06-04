@@ -83,30 +83,6 @@ export type Nft = {
       ],
       "accounts": [
         {
-          "name": "maintainers",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  105,
-                  110,
-                  116,
-                  97,
-                  105,
-                  110,
-                  101,
-                  114,
-                  115
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "mintAccount",
           "writable": true,
           "pda": {
@@ -206,6 +182,35 @@ export type Nft = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "closeNft",
+      "discriminator": [
+        234,
+        232,
+        31,
+        120,
+        12,
+        30,
+        61,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "mintAccount",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        }
+      ],
+      "args": []
     },
     {
       "name": "createNft",
@@ -424,30 +429,6 @@ export type Nft = {
       ],
       "accounts": [
         {
-          "name": "maintainers",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  105,
-                  110,
-                  116,
-                  97,
-                  105,
-                  110,
-                  101,
-                  114,
-                  115
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "collections",
           "writable": true,
           "pda": {
@@ -501,10 +482,6 @@ export type Nft = {
         {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "tokenProgram",
-          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
       "args": [
@@ -581,29 +558,6 @@ export type Nft = {
         166
       ],
       "accounts": [
-        {
-          "name": "maintainers",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  105,
-                  110,
-                  116,
-                  97,
-                  105,
-                  110,
-                  101,
-                  114,
-                  115
-                ]
-              }
-            ]
-          }
-        },
         {
           "name": "mintAccount",
           "writable": true,
@@ -1013,6 +967,19 @@ export type Nft = {
       ]
     },
     {
+      "name": "closeNftEvent",
+      "discriminator": [
+        86,
+        8,
+        136,
+        106,
+        243,
+        251,
+        229,
+        158
+      ]
+    },
+    {
       "name": "createNftEvent",
       "discriminator": [
         107,
@@ -1134,6 +1101,18 @@ export type Nft = {
           {
             "name": "amount",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "closeNftEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mintAccount",
+            "type": "pubkey"
           }
         ]
       }

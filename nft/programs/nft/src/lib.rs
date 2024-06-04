@@ -8,9 +8,9 @@ use anchor_lang::{
     Lamports,
 };
 use anchor_spl::{
+    associated_token::AssociatedToken,
     token_2022::{self, set_authority, Burn, MintTo, SetAuthority, Token2022, TransferChecked},
     token_interface::{token_metadata_initialize, Mint, TokenAccount, TokenMetadataInitialize},
-    associated_token::AssociatedToken,
 };
 
 mod constants;
@@ -67,5 +67,9 @@ pub mod nft {
 
     pub fn transfer(ctx: Context<TransferNFT>, collection: String, nft: String) -> Result<()> {
         instructions::transfer_nft(ctx, collection, nft)
+    }
+
+    pub fn close_nft(ctx: Context<CloseNFT>) -> Result<()> {
+        instructions::close(ctx)
     }
 }

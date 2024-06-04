@@ -1,6 +1,7 @@
 use super::*;
 
 mod burn;
+mod close_nft;
 mod create_nft;
 mod init_collection;
 mod initialize;
@@ -9,5 +10,6 @@ mod mint;
 mod transfer;
 
 pub use {
-    burn::*, create_nft::*, init_collection::*, initialize::*, maintainers::*, mint::*, transfer::*
+    burn::*, close_nft::*, create_nft::*, init_collection::*, initialize::*, maintainers::*,
+    mint::*, transfer::*,
 };

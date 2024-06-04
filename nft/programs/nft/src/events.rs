@@ -12,6 +12,11 @@ pub struct InitCollectionEvent {
 }
 
 #[event]
+pub struct CloseNftEvent {
+    pub mint_account: Pubkey,
+}
+
+#[event]
 pub struct CreateNftEvent {
     /// NFT Name
     pub name: String,

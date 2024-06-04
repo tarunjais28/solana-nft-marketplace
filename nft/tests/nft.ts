@@ -67,7 +67,6 @@ describe("token_program", () => {
     let initCollection = await program.methods
       .initCollection(collectionName)
       .accounts({
-        maintainers: pdaMaintainers,
         collections: pdaCollection,
         nftCounter: pdaNftCounter,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
@@ -85,7 +84,6 @@ describe("token_program", () => {
     let createNft = await program.methods
       .createNft(createTokenParams)
       .accounts({
-        maintainers: pdaMaintainers,
         collections: pdaCollection,
         nftCounter: pdaNftCounter,
         mintAccount,
@@ -104,7 +102,6 @@ describe("token_program", () => {
     let mintNFT = await program.methods
       .mint(collectionName, nftName)
       .accounts({
-        maintainers: pdaMaintainers,
         mintAccount,
         toAccount: user1ATA,
         authority: user1.publicKey,
@@ -122,7 +119,6 @@ describe("token_program", () => {
     let burnNFT = await program.methods
       .burn(collectionName, nftName)
       .accounts({
-        maintainers: pdaMaintainers,
         mintAccount,
         from: user1ATA,
         authority: user1.publicKey,
@@ -151,6 +147,21 @@ describe("token_program", () => {
       .rpc();
 
     await confirmTransaction(transferNFT);
+  };
+
+  const closeNFT = async () => {
+    // Test mint_token instruction
+    let closeNFT = await program.methods
+      .closeNft()
+      .accounts({
+        mintAccount,
+        authority: admin.publicKey,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+      })
+      .signers([admin])
+      .rpc();
+
+    await confirmTransaction(closeNFT);
   };
 
   it("Initialize test accounts", async () => {
@@ -477,6 +488,61 @@ describe("token_program", () => {
     );
   });
 
+  it("Test close NFT", async () => {
+    [mintAccount] = anchor.web3.PublicKey.findProgramAddressSync(
+      [MINT, COLLECTION_BUFFER, TEST_BUFFER],
+      program.programId,
+    );
+
+    await closeNFT();
+  });
+
+  it("Test Re-Mint NFT", async () => {
+    [pdaCollection] = anchor.web3.PublicKey.findProgramAddressSync(
+      [COLLECTIONS, COLLECTION_BUFFER],
+      program.programId,
+    );
+
+    [mintAccount] = anchor.web3.PublicKey.findProgramAddressSync(
+      [MINT, COLLECTION_BUFFER, TEST_BUFFER],
+      program.programId,
+    );
+
+    let createTokenParams = {
+      name: TEST_NFT,
+      collection: COLLECTION,
+      symbol: "tes",
+      uri: "https://arweave.net/dEGah51x5Dlvbfcl8UUGz52KovgWh6QmrYIW48hi244?ext=png",
+      royalty: 1,
+    };
+
+    // await createNFT(createTokenParams);
+
+    // let nftCounter = await program.account.nftCounter.fetch(pdaNftCounter);
+
+    // // Creating associated token for user1 for Test
+    // let user1ATA = await getAssociatedTokenAddress(
+    //   mintAccount,
+    //   user1.publicKey,
+    //   undefined,
+    //   TOKEN_2022_PROGRAM_ID,
+    // );
+
+    // await mint(COLLECTION, TEST_NFT, user1ATA);
+
+    // // Check balance after mint
+    // let supply = await provider.connection.getTokenSupply(mintAccount);
+    // assert.equal(Number(supply.value.amount), Number(MINT_AMOUNT));
+
+    // let user1Account = await getAccount(
+    //   provider.connection,
+    //   user1ATA,
+    //   undefined,
+    //   TOKEN_2022_PROGRAM_ID,
+    // );
+    // assert.equal(Number(user1Account.amount), Number(MINT_AMOUNT));
+  });
+
   it("Test Transfer Token", async () => {
     [pdaCollection] = anchor.web3.PublicKey.findProgramAddressSync(
       [COLLECTIONS, COLLECTION_2_BUFFER],
@@ -499,7 +565,7 @@ describe("token_program", () => {
     await createNFT(createTokenParams);
 
     let nftCounter = await program.account.nftCounter.fetch(pdaNftCounter);
-    assert.equal(Number(nftCounter.value), 3);
+    assert.equal(Number(nftCounter.value), 1);
 
     let collections = await program.account.collections.fetch(pdaCollection);
     assert.equal(collections.nfts.length, 1);

@@ -37,12 +37,6 @@ pub fn mint_nft(ctx: Context<MintNFT>, collection: String, nft: String) -> Resul
 #[derive(Accounts)]
 #[instruction(collection: String, nft: String)]
 pub struct MintNFT<'info> {
-    #[account(
-        seeds = [MAINTAINERS_TAG],
-        bump,
-    )]
-    pub maintainers: Box<Account<'info, Maintainers>>,
-
     /// CHECK: This is the token that we want to mint
     #[account(
         mut,
@@ -68,7 +62,7 @@ pub struct MintNFT<'info> {
     pub token_program: Program<'info, Token2022>,
 
     pub system_program: Program<'info, System>,
-    
+
     pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
