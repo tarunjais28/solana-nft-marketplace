@@ -516,31 +516,31 @@ describe("token_program", () => {
       royalty: 1,
     };
 
-    // await createNFT(createTokenParams);
+    await createNFT(createTokenParams);
 
-    // let nftCounter = await program.account.nftCounter.fetch(pdaNftCounter);
+    let nftCounter = await program.account.nftCounter.fetch(pdaNftCounter);
 
-    // // Creating associated token for user1 for Test
-    // let user1ATA = await getAssociatedTokenAddress(
-    //   mintAccount,
-    //   user1.publicKey,
-    //   undefined,
-    //   TOKEN_2022_PROGRAM_ID,
-    // );
+    // Creating associated token for user1 for Test
+    let user1ATA = await getAssociatedTokenAddress(
+      mintAccount,
+      user1.publicKey,
+      undefined,
+      TOKEN_2022_PROGRAM_ID,
+    );
 
-    // await mint(COLLECTION, TEST_NFT, user1ATA);
+    await mint(COLLECTION, TEST_NFT, user1ATA);
 
-    // // Check balance after mint
-    // let supply = await provider.connection.getTokenSupply(mintAccount);
-    // assert.equal(Number(supply.value.amount), Number(MINT_AMOUNT));
+    // Check balance after mint
+    let supply = await provider.connection.getTokenSupply(mintAccount);
+    assert.equal(Number(supply.value.amount), Number(MINT_AMOUNT));
 
-    // let user1Account = await getAccount(
-    //   provider.connection,
-    //   user1ATA,
-    //   undefined,
-    //   TOKEN_2022_PROGRAM_ID,
-    // );
-    // assert.equal(Number(user1Account.amount), Number(MINT_AMOUNT));
+    let user1Account = await getAccount(
+      provider.connection,
+      user1ATA,
+      undefined,
+      TOKEN_2022_PROGRAM_ID,
+    );
+    assert.equal(Number(user1Account.amount), Number(MINT_AMOUNT));
   });
 
   it("Test Transfer Token", async () => {
