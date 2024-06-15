@@ -2,18 +2,6 @@ use super::*;
 
 /// Function to initialize the contract
 pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-    let caller = ctx.accounts.authority.to_account_info().key();
-    let maintainers = &mut ctx.accounts.maintainers;
-    maintainers.save(caller);
-
-    let counter = &mut ctx.accounts.nft_counter;
-    counter.init();
-
-    // Emit init event
-    emit!(InitEvent {
-        admin: caller,
-        sub_admin: caller
-    });
 
     Ok(())
 }

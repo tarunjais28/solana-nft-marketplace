@@ -2,35 +2,6 @@ use super::*;
 
 /// Function to burn the tokens
 pub fn burn_nft(ctx: Context<BurnNFT>, collection: String, nft: String) -> Result<()> {
-    let seeds = &[
-        MINT_TAG,
-        collection.as_bytes(),
-        nft.as_bytes(),
-        &[ctx.bumps.mint_account],
-    ];
-    let signer = [&seeds[..]];
-
-    let counter = &mut ctx.accounts.nft_counter;
-    counter.decreement();
-
-    let collections = &mut ctx.accounts.collections;
-    collections.remove_nft(ctx.accounts.mint_account.key());
-
-    let cpi_program = ctx.accounts.token_program.to_account_info();
-
-    // Create the MintTo struct for our context
-    let cpi_accounts = Burn {
-        mint: ctx.accounts.mint_account.to_account_info(),
-        from: ctx.accounts.from.to_account_info(),
-        authority: ctx.accounts.authority.to_account_info(),
-    };
-    token_2022::burn(
-        CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer),
-        1,
-    )?;
-
-    // Emit burn event
-    emit!(BurnEvent { nft, amount: 1 });
 
     Ok(())
 }

@@ -3,21 +3,6 @@ use super::*;
 /// Function to close nft
 /// Only called by the authority which holds close access
 pub fn close(ctx: Context<CloseNFT>) -> Result<()> {
-    let cpi_program = ctx.accounts.token_program.to_account_info();
-
-    // Create the MintTo struct for our context
-    let cpi_accounts = token_2022::CloseAccount {
-        authority: ctx.accounts.authority.to_account_info(),
-        account: ctx.accounts.mint_account.to_account_info(),
-        destination: ctx.accounts.authority.to_account_info(),
-    };
-
-    token_2022::close_account(CpiContext::new(cpi_program, cpi_accounts))?;
-
-    // Emit close nft event
-    emit!(CloseNftEvent {
-        mint_account: ctx.accounts.mint_account.key()
-    });
 
     Ok(())
 }

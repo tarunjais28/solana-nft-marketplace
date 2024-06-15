@@ -2,53 +2,18 @@ use super::*;
 
 /// Function to update admin
 pub fn update_admin(ctx: Context<UpdateAdmin>, address: Pubkey) -> Result<()> {
-    let caller = ctx.accounts.authority.to_account_info().key();
-    let maintainers = &mut ctx.accounts.maintainers;
-    let from = maintainers.admin;
-
-    // Ensuring authorized sender
-    require!(maintainers.admin.eq(&caller), CustomError::Unauthorized);
-    maintainers.add_admin(address);
-
-    // Emit update admin event
-    emit!(UpdateAdminEvent { from, to: address });
 
     Ok(())
 }
 
 /// Function to add sub_admins
 pub fn add_sub_admins(ctx: Context<UpdateSubAdmins>, addresses: Vec<Pubkey>) -> Result<()> {
-    let caller = ctx.accounts.authority.to_account_info().key();
-    let maintainers = &mut ctx.accounts.maintainers;
-
-    // Ensuring authorized sender
-    require!(maintainers.admin.eq(&caller), CustomError::Unauthorized);
-
-    maintainers.add_sub_admins(addresses.clone());
-
-    // Emit add sub admins event
-    emit!(UpdateSubAdminsEvent {
-        update_type: UpdateType::Add,
-        addresses
-    });
 
     Ok(())
 }
 
 /// Function to remove sub_admins
 pub fn remove_sub_admins(ctx: Context<UpdateSubAdmins>, addresses: Vec<Pubkey>) -> Result<()> {
-    let caller = ctx.accounts.authority.to_account_info().key();
-    let maintainers = &mut ctx.accounts.maintainers;
-
-    // Ensuring authorized sender
-    require!(maintainers.admin.eq(&caller), CustomError::Unauthorized);
-    maintainers.remove_sub_admins(addresses.clone());
-
-    // Emit remove sub admins event
-    emit!(UpdateSubAdminsEvent {
-        update_type: UpdateType::Remove,
-        addresses
-    });
 
     Ok(())
 }

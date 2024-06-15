@@ -5,31 +5,6 @@ use super::*;
 /// This function can throw following errors:
 ///   - Amount Can't Be Zero (when user passes 0 amount for mint).
 pub fn mint_nft(ctx: Context<MintNFT>, collection: String, nft: String) -> Result<()> {
-    let seeds = &[
-        MINT_TAG,
-        collection.as_bytes(),
-        nft.as_bytes(),
-        &[ctx.bumps.mint_account],
-    ];
-    let signer = [&seeds[..]];
-    let cpi_program = ctx.accounts.token_program.to_account_info();
-
-    // Create the MintTo struct for our context
-    let cpi_accounts = MintTo {
-        mint: ctx.accounts.mint_account.to_account_info(),
-        to: ctx.accounts.to_account.to_account_info(),
-        authority: ctx.accounts.mint_account.to_account_info(),
-    };
-
-    token_2022::mint_to(
-        CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer),
-        1,
-    )?;
-
-    ctx.accounts.update_mint_authority(&signer)?;
-
-    // Emit mint event
-    emit!(MintEvent { nft, amount: 1 });
 
     Ok(())
 }
